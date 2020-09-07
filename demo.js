@@ -6,7 +6,7 @@ async function init() {
 
   const { data: auth } = await axios({
     method: 'POST',
-    url: 'http://localhost:1337/auth/local',
+    url: `${this.GRIDSOME_API_URL}/auth/local`,
     data: {
       identifier: 'admin',
       password: '123456'
@@ -17,7 +17,7 @@ async function init() {
   posts.forEach(({ title, content }) => {
     axios({
       method: 'POST',
-      url: 'http://localhost:1337/posts',
+      url: `${this.GRIDSOME_API_URL}/posts`,
       headers: {
         Authorization: `Bearer ${token}`
       },

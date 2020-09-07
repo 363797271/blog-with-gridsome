@@ -134,7 +134,7 @@ export default {
       try {
         await axios({
           method: 'POST',
-          url: 'http://localhost:1337/contacts',
+          url: `${this.GRIDSOME_API_URL}/contacts`,
           data: this.form
         })
         alert('发送成功')
