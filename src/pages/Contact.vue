@@ -34,6 +34,7 @@
               <div class="form-group floating-label-form-group controls">
                 <label>Name</label>
                 <input
+                  v-model="form.name"
                   type="text"
                   class="form-control"
                   placeholder="Name"
@@ -48,6 +49,7 @@
               <div class="form-group floating-label-form-group controls">
                 <label>Email Address</label>
                 <input
+                  v-model="form.email"
                   type="email"
                   class="form-control"
                   placeholder="Email Address"
@@ -64,6 +66,7 @@
               >
                 <label>Phone Number</label>
                 <input
+                  v-model="form.phone"
                   type="tel"
                   class="form-control"
                   placeholder="Phone Number"
@@ -78,6 +81,7 @@
               <div class="form-group floating-label-form-group controls">
                 <label>Message</label>
                 <textarea
+                  v-model="form.message"
                   rows="5"
                   class="form-control"
                   placeholder="Message"
@@ -94,6 +98,8 @@
               type="submit"
               class="btn btn-primary"
               id="sendMessageButton"
+              @click.prevent="onSubmit"
+              :disabled="disabled"
             >
               Send
             </button>
@@ -105,8 +111,43 @@
 </template>
 
 <script>
+import axios from 'axios'
 export default {
-  name: 'ContactPage'
+  name: 'ContactPage',
+  data() {
+    return {
+      disabled: false,
+      form: {
+        name: '',
+        email: '',
+        phone: '',
+        message: ''
+      }
+    }
+  },
+  methods: {
+    async onSubmit() {
+      const form = document.querySelector('#contactForm')
+      if (!form.reportValidity()) return
+
+      this.disabled = true
+      try {
+        await axios({
+          method: 'POST',
+          url: 'http://localhost:1337/contacts',
+          data: this.form
+        })
+        alert('发送成功')
+
+        for (let key in this.form) {
+          this.form[key] = ''
+        }
+      } catch (err) {
+        alert(err)
+      }
+      this.disabled = false
+    }
+  }
 }
 </script>
 

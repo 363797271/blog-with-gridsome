@@ -5,9 +5,15 @@ import 'bootstrap/dist/css/bootstrap.min.css'
 import '@fortawesome/fontawesome-free/css/all.min.css'
 import './assets/css/index.css'
 
+import dayjs from 'dayjs'
+
 import DefaultLayout from '~/layouts/Default.vue'
 
 export default function(Vue, { router, head, isClient }) {
   // Set default layout as a global component
   Vue.component('Layout', DefaultLayout)
+
+  Vue.filter('date', (value, format = 'MMMM DD, YYYY') => {
+    return dayjs(value).format(format)
+  })
 }

@@ -1,14 +1,23 @@
 <template>
   <Layout>
     <!-- Page Header -->
-    <header class="masthead" style="background-image: url('/img/home-bg.jpg')">
+    <header
+      class="masthead"
+      :style="{
+        backgroundImage: `url('${
+          general.cover
+            ? 'http://localhost:1337' + general.cover.url
+            : '/img/home-bg.jpg'
+        }')`
+      }"
+    >
       <div class="overlay"></div>
       <div class="container">
         <div class="row">
           <div class="col-lg-8 col-md-10 mx-auto">
             <div class="site-heading">
-              <h1>Clean Blog</h1>
-              <span class="subheading">A Blog Theme by Start Bootstrap</span>
+              <h1>{{ general.title }}</h1>
+              <span class="subheading">{{ general.subtitle }}</span>
             </div>
           </div>
         </div>
@@ -24,7 +33,7 @@
             :key="edge.node.id"
             class="post-preview"
           >
-            <g-link :to="'/post/'+edge.node.id">
+            <g-link :to="'/post/' + edge.node.id">
               <h2 class="post-title">{{ edge.node.title }}</h2>
               <!-- <h3 class="post-subtitle">
                 Problems look mighty small from 150 miles up
@@ -37,11 +46,11 @@
                   edge.node.created_by.firstname + edge.node.created_by.lastname
                 }}
               </a>
-              on {{ edge.node.created_at }}
+              on {{ edge.node.created_at | date }}
             </p>
             <p>
               <span v-for="tag in edge.node.tags" :key="tag.id">
-                <a href="">{{ tag.title }}</a>
+                <g-link :to="`/tag/${tag.id}`">{{ tag.title }}</g-link>
                 &nbsp;
               </span>
             </p>
@@ -57,17 +66,22 @@
 
 <page-query>
 query($page: Int) {
-  posts: allStrapiPost(perPage: 5, page: $page)
-  @paginate {
+  posts: allStrapiPost(
+    sortBy: "updated_at"
+    order: DESC
+    perPage: 5
+    page: $page
+  ) @paginate {
     pageInfo {
       totalPages
       currentPage
     }
-    edges{
-      node{
+
+    edges {
+      node {
         id
         title
-        created_by{
+        created_by {
           id
           firstname
           lastname
@@ -76,6 +90,19 @@ query($page: Int) {
         tags {
           id
           title
+        }
+      }
+    }
+  }
+
+  general: allStrapiGeneral {
+    edges {
+      node {
+        id
+        title
+        subtitle
+        cover {
+          url
         }
       }
     }
@@ -90,6 +117,11 @@ export default {
   components: { Pager },
   metaInfo: {
     title: 'Hello, world!'
+  },
+  computed: {
+    general() {
+      return this.$page.general.edges[0].node
+    }
   }
 }
 </script>
